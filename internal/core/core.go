@@ -232,6 +232,8 @@ func (p *Core) createResources(initial bool) error {
 			p)
 	}
 
+	p.ctx = context.WithValue(p.ctx, "ovenMedia", p.conf.OvenMedia)
+
 	if !p.conf.RTSPDisable &&
 		(p.conf.Encryption == conf.EncryptionNo ||
 			p.conf.Encryption == conf.EncryptionOptional) {
