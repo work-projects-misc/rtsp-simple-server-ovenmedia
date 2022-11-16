@@ -14,6 +14,7 @@ import (
 	"github.com/aler9/gortsplib/pkg/h264"
 	"github.com/aler9/gortsplib/pkg/mpeg4audio"
 	"github.com/aler9/gortsplib/pkg/ringbuffer"
+	"github.com/go-redis/redis/v8"
 	"github.com/google/uuid"
 	"github.com/notedit/rtmp/format/flv/flvio"
 
@@ -533,6 +534,17 @@ func (c *rtmpConn) runPublish(ctx context.Context, u *url.URL) error {
 	c.log(logger.Info, "is publishing to path '%s', %s",
 		c.path.Name(),
 		sourceTrackInfo(tracks))
+
+	ovenMedia, ok := ctx.Value("ovenMedia").(conf.OvenMedia)
+	if !ok {
+		c.log(logger.Error, "failed to fetch ovenMedia from ctx")
+	} else {
+		rdb := redis.NewClient(&redis.Options{Addr: ovenMedia.RedisAddress, Password: ovenMedia.RedisAddress})
+		value := fmt.Sprintf("RTSP://%s%s/%s", ovenMedia.StreamHostName, c.path.rtspAddress, c.path.Name())
+		if err := rdb.Set(ctx, c.path.Name(), value, 0).Err(); err != nil {
+			c.log(logger.Error, "write to redis failed key=%s err=%v", c.path.Name(), err)
+		}
+	}
 
 	// disable write deadline to allow outgoing acknowledges
 	c.nconn.SetWriteDeadline(time.Time{})

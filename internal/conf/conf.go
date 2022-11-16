@@ -224,6 +224,15 @@ type Conf struct {
 
 	// paths
 	Paths map[string]*PathConf `json:"paths"`
+
+	// ericsson config
+	OvenMedia `json:"ovenMedia"`
+}
+
+type OvenMedia struct {
+	RedisAddress   string `json:"redisAddress"`
+	RedisPassword  string `json:"redisPassword"`
+	StreamHostName string `json:"streamHostName"`
 }
 
 // Load loads a Conf.
