@@ -231,6 +231,7 @@ type Conf struct {
 
 type OvenMedia struct {
 	RedisAddress   string `json:"redisAddress"`
+	RedisPassword  string `json:"redisPassword"`
 	StreamHostName string `json:"streamHostName"`
 }
 

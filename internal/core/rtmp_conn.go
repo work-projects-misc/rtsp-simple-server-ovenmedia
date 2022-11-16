@@ -539,7 +539,7 @@ func (c *rtmpConn) runPublish(ctx context.Context, u *url.URL) error {
 	if !ok {
 		c.log(logger.Error, "failed to fetch ovenMedia from ctx")
 	} else {
-		rdb := redis.NewClient(&redis.Options{Addr: ovenMedia.RedisAddress})
+		rdb := redis.NewClient(&redis.Options{Addr: ovenMedia.RedisAddress, Password: ovenMedia.RedisAddress})
 		value := fmt.Sprintf("RTSP://%s%s/%s", ovenMedia.StreamHostName, c.path.rtspAddress, c.path.Name())
 		if err := rdb.Set(ctx, c.path.Name(), value, 0).Err(); err != nil {
 			c.log(logger.Error, "write to redis failed key=%s err=%v", c.path.Name(), err)
